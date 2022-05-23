@@ -11,3 +11,4 @@ thumbs.db
 .directory
 
 package.windows.json
+yarn.lock
