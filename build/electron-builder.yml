@@ -25,7 +25,7 @@ linux:
     - AppImage
     - snap
 electronDownload:
-  mirror: https://github.com/castlabs/electron-releases/releases/tag/v
+  mirror: https://github.com/castlabs/electron-releases/releases/download/v
 publish:
   provider: github
   owner: psycodeliccircus
