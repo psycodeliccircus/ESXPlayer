@@ -9,3 +9,5 @@ thumbs.db
 
 # Dolphin file manager
 .directory
+
+package.windows.json
