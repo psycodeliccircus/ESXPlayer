@@ -1,0 +1,34 @@
+appId: me.renildomarcio.ESXPlayer
+mac:
+  category: public.app-category.entertainment
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+    - target: msi
+      arch:
+        - x64
+        - ia32
+    - target: zip
+      arch:
+        - x64
+        - ia32
+snap:
+  plugs:
+    - default
+    - screen-inhibit-control
+linux:
+  category: Video
+  target:
+    - AppImage
+    - snap
+electronDownload:
+  mirror: https://github.com/castlabs/electron-releases/releases/tag/v
+publish:
+  provider: github
+  owner: psycodeliccircus
+  repo: ESXPlayer
+  releaseType: release
+  updaterCacheDirName: ESXPlayer-updater

@@ -1,0 +1,23 @@
+{
+  "name": "esxplayer",
+  "version": "1.0.0",
+  "description": "A stream player for Linux, Windows, Mac now with portuguese language",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "clean": "rimraf dist",
+    "build": "electron-builder -c build/electron-builder.yml -p never"
+  },
+  "repository": "https://github.com/psycodeliccircus/ESXPlayer.git",
+  "author": "Renildo Marcio <renildomrc@gmail.com>",
+  "devDependencies": {
+    "electron": "^12.0.11",
+    "electron-builder": "^22.3.2"
+  },
+  "dependencies": {
+    "@cliqz/adblocker-electron": "^1.5.0",
+    "electron-prompt": "^1.5.1",
+    "electron-store": "^5.1.1",
+    "node-fetch": "^2.6.0"
+  }
+}
