@@ -1,6 +1,6 @@
 {
   "name": "esxplayer",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A stream player for Linux, Windows, Mac now with portuguese language",
   "main": "src/main.js",
   "scripts": {
