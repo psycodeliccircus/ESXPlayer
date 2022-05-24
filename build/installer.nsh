@@ -23,9 +23,9 @@
 !macro customInstall
   ; Remove dangling reference of version 2.13.1
   ${If} $installMode == "all"
-    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\66bed7db-e601-54e6-b2e8-7be611d82557"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FE159ACA-249E-4CE6-B0CE-EF61DA180C97"
   ${Else}
-    DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\66bed7db-e601-54e6-b2e8-7be611d82557"
+    DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\FE159ACA-249E-4CE6-B0CE-EF61DA180C97"
   ${EndIf}
   !insertMacro disableAutoUpdates
   Delete "$SMSTARTUP\ESXPlayer.lnk"
