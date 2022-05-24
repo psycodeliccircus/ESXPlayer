@@ -1,6 +1,5 @@
 productName: ESXPlayer
 appId: me.renildomarcio.ESXPlayer
-artifactName: ${productName}-setup-${version}.${ext}
 copyright: Copyright © 2015-2022 ESXBrasil - Dev by RenildoMarcio
 mac:
   target:
@@ -8,7 +7,6 @@ mac:
       arch:
         - x64
         - arm64
-  artifactName: ${productName}-setup-${version}-${arch}.${ext}
   category: public.app-category.entertainment
   icon: build/icon.ico
 win:
