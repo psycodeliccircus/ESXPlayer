@@ -17,11 +17,7 @@ win:
       arch:
         - x64
         - ia32
-    - target: msi
-      arch:
-        - x64
-        - ia32
-    - target: zip
+    - target: portable
       arch:
         - x64
         - ia32
@@ -36,6 +32,8 @@ nsis:
   packElevateHelper: true
   createDesktopShortcut: true
   shortcutName: ESXPlayer
+portable: 
+    artifactName: ${productName}_portable_${version}.exe
 snap:
   plugs:
     - default

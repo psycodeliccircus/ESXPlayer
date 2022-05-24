@@ -4,7 +4,7 @@ module.exports = [
     logo: 'services/amazon-prime-video.png',
     url: 'https://www.primevideo.com/',
     color: '#46ABE2',
-    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
+    userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
@@ -28,6 +28,7 @@ module.exports = [
   },
   {
     name: 'Disney+',
+    hidden: true,
     logo: 'services/disney+.png',
     url: 'https://www.disneyplus.com/',
     color: '#ffffff',
@@ -45,11 +46,10 @@ module.exports = [
   },
   {
     name: 'HBO Max',
-    hidden: true,
-    logo: 'services/hbomax.jpeg',
+    logo: 'services/hbo-max-256.png',
     url: 'https://play.hbomax.com/',
     color: '#5b2ddb',
-    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
+    userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
     style: {},
     permissions: [],
   },
@@ -73,10 +73,11 @@ module.exports = [
   },
   {
     name: 'Netflix',
+    hidden: true,
     logo: 'services/netflix.png',
     url: 'https://netflix.com/browse',
     color: '#e50914',
-    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
+    userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
@@ -94,7 +95,6 @@ module.exports = [
     logo: 'services/pluto-tv.png',
     url: 'https://pluto.tv/',
     color: '#000000',
-    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
@@ -118,6 +118,7 @@ module.exports = [
   },
   {
     name: 'YouTube',
+    hidden: true,
     logo: 'services/youtube.svg',
     url: 'https://youtube.com',
     color: '#ff0000',
@@ -126,12 +127,11 @@ module.exports = [
   },
   {
     name: 'YouTube TV',
-    hidden: true,
     logo: 'services/youtube.svg',
     url: 'https://youtube.com/tv',
     color: '#ff0000',
     style: {},
-    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
+    userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
     permissions: []
   },
 ];

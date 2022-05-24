@@ -1,24 +1,30 @@
 {
   "name": "esxplayer",
-  "version": "3.0.0",
-  "description": "A stream player for Linux, Windows, Mac now with portuguese language",
+  "version": "3.0.8",
+  "description": "A stream player!",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "build": "yarn rimraf dist && electron-builder -c build/electron-builder.yml -p always"
+    "build": "yarn rimraf dist && electron-builder -c build/electron-builder.yml -p always",
+    "build2": "yarn rimraf dist && electron-builder -c build/electron-builder.yml"
   },
   "repository": "https://github.com/psycodeliccircus/ESXPlayer.git",
   "author": "Renildo Marcio <renildomrc@gmail.com>",
   "devDependencies": {
-    "electron": "^12.0.11",
-    "electron-builder": "^22.3.2",
+    "electron": "^12.2.3",
+    "electron-builder": "^22.14.13",
     "electron-notarize": "^1.2.1"
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.5.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.4.7",
     "electron-prompt": "^1.5.1",
-    "electron-store": "^5.1.1",
-    "node-fetch": "^2.6.0",
-    "rimraf": "^3.0.2"
+    "electron-store": "^5.2.0",
+    "electron-updater": "^5.0.1",
+    "log-to-file": "^3.0.0",
+    "node-fetch": "^2.6.7",
+    "rimraf": "^3.0.2",
+    "update-electron-app": "^2.0.1"
   }
 }

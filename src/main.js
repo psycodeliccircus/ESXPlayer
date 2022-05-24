@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const fs = require('fs'),
   path = require('path'),
-  { app, BrowserWindow, session, Menu, ipcMain } = require('electron'),
+  { app, BrowserWindow, session, Menu, ipcMain, dialog } = require('electron'),
   Store = require('electron-store'),
   {
     ElectronBlocker,
@@ -19,24 +19,39 @@ const headerScript = fs.readFileSync(
 let mainWindow; // Global Windows Object
 const menu = require('./menu');
 const store = new Store();
+const log = require('log-to-file')
+const { autoUpdater } = require('electron-updater');
+const isUserDeveloper = require('electron-is-dev')
+const log1 = require('electron-log')
+
+
+log(path.join(__dirname, 'esxplayer.log'))
 
 // Analytics endpoint
 let defaultUserAgent;
 
 async function createWindow() {
+  log('Creating window', 'esxplayer.log')
+  if (isUserDeveloper) {
+    autoUpdater.checkForUpdates();
+  } else {
+    autoUpdater.checkForUpdates();
+  }
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 900,
     height: 580,
     icon: __dirname + "/build/icon.ico",
     webPreferences: {
-      nodeIntegration: false,
-      nodeIntegrationInWorker: false,
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
       contextIsolation: false, // Must be disabled for preload script. I am not aware of a workaround but this *shouldn't* effect security
       enableRemoteModule: true,
       plugins: true,
       preload: path.join(__dirname, 'client-preload.js')
     },
+
+    
 
     // Window Styling
     transparent: true,
@@ -61,6 +76,7 @@ async function createWindow() {
 
     if (fs.existsSync(engineCachePath)) {
       console.log('Adblock engine cache found. Loading it into app.');
+      log('Adblock engine cache found. Loading it into app.', 'esxplayer.log')
       var engine = await ElectronBlocker.deserialize(
         fs.readFileSync(engineCachePath)
       );
@@ -73,6 +89,7 @@ async function createWindow() {
     fs.writeFile(engineCachePath, engine.serialize(), err => {
       if (err) throw err;
       console.log('Adblock Engine file cache has been updated!');
+      log('Adblock Engine file cache has been updated!', 'esxplayer.log')
     });
   }
 
@@ -111,6 +128,7 @@ async function createWindow() {
     store.set('version', app.getVersion());
     store.set('services', []);
     console.log('Initialised Config!');
+    log('Initialised Config!', 'esxplayer.log')
   }
 
   // Load the services and merge the users and default services
@@ -148,10 +166,12 @@ async function createWindow() {
 
   if (relaunchToPage !== undefined) {
     console.log('Relaunching Page ' + relaunchToPage);
+    log(('Relaunching Page ' + relaunchToPage), 'esxplayer.log');
     mainWindow.loadURL(relaunchToPage);
     store.delete('relaunch.toPage');
   } else if (defaultService == 'lastOpenedPage' && lastOpenedPage) {
     console.log('Loading The Last Opened Page ' + lastOpenedPage);
+    log(('Loading The Last Opened Page ' + lastOpenedPage), 'esxplayer.log')
     mainWindow.loadURL(lastOpenedPage);
   } else if (defaultService != undefined) {
     defaultService = global.services.find(
@@ -159,6 +179,7 @@ async function createWindow() {
     );
     if (defaultService.url) {
       console.log('Loading The Default Service ' + defaultService.url);
+      log(('Loading The Default Service ' + defaultService.url), 'esxplayer.log')
       mainWindow.loadURL(defaultService.url);
       mainWindow.webContents.userAgent = defaultService.userAgent ? defaultService.userAgent : defaultUserAgent;
     } else {
@@ -169,6 +190,7 @@ async function createWindow() {
     }
   } else {
     console.log('Loading The Main Menu');
+    log('Loading The Main Menu', 'esxplayer.log')
     mainWindow.loadFile('src/ui/index.html');
   }
 
@@ -277,6 +299,8 @@ app.on('ready', () => setTimeout(createWindow, 500));
 app.on('relaunch', () => {
   console.log('Relaunching The Application!');
 
+  log('Relaunching The Application!', 'esxplayer.log')
+
   // Store details to remeber when relaunched
   if (mainWindow.getURL() != '') {
     store.set('relaunch.toPage', mainWindow.getURL());
@@ -303,6 +327,7 @@ app.on('relaunch', () => {
 // Chnage the windows url when told to by the ui
 ipcMain.on('open-url', (e, service) => {
   console.log('Openning Service ' + service.name);
+  log(('Openning Service ' + service.name), 'esxplayer.log')
   mainWindow.webContents.userAgent = service.userAgent ? service.userAgent : defaultUserAgent;
   mainWindow.loadURL(service.url);
 });
@@ -351,3 +376,57 @@ app.on('remote-get-builtin', rejectEvent);
 app.on('remote-get-current-window', rejectEvent);
 app.on('remote-get-current-web-contents', rejectEvent);
 app.on('remote-get-guest-web-contents', rejectEvent);
+
+Object.defineProperty(app, 'isPackaged', {
+  get() {
+    return true;
+  }
+});
+
+autoUpdater.on('checking-for-update', () => {
+  //log1.log("Checking for updates.")
+  log('Checking for updates.', 'esxplayer.log')
+})
+
+autoUpdater.on('update-available', info => {
+  //log1.log("Update available.")
+  log('Update available.', 'esxplayer.log')
+})
+
+autoUpdater.on('download-progress', progressObj => {
+  //log1.log(`Downloading update. DL: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`)
+  log((`Downloading update. DL: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`), 'esxplayer.log')
+})
+
+autoUpdater.on('error', err => {
+  //log1.log(`Update check failed: ${err.toString()}`)
+  log((`Update check failed: ${err.toString()}`), 'esxplayer.log')
+})
+
+autoUpdater.on('update-not-available', info => {
+  //log1.log("Update not available.")
+  log('Update not available. ', 'esxplayer.log')
+  const dialogOpts = {
+    buttons: ['Reneciar'],
+    title: 'Atualização',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail: 'Você ja esta usando a versão mais atualizada!'
+  };
+})
+
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate) => {
+  // log.info('A new version has been downloaded');
+  log('A new version has been downloaded', 'esxplayer.log')
+  //writeLog('info', 'A new version has been downloaded');
+  const dialogOpts = {
+    buttons: ['Reneciar', 'Mais tarde'],
+    title: 'Dicas para atualização de versão',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail: 'A nova versão foi baixada, Reneciar o programa para instalar a nova versão!'
+  };
+  dialog.showMessageBox(dialogOpts, response => {
+    if (response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
