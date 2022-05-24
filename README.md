@@ -1,11 +1,6 @@
 ## ESXPlayer
+Sistema 100% otimizado e melhorado para sua experiência.
+**Com canais:**
 
-```
-# For Linux
-ln -s package.linux.json package.json
-# For Mac
-ln -s package.mac.json package.json
-
-npm install
-npm start
-```
+Esperamos que você curtam.
+Doações via pix: 989.932.241-53
