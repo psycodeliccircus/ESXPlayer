@@ -4,6 +4,7 @@ module.exports = [
     logo: 'services/amazon-prime-video.png',
     url: 'https://www.primevideo.com/',
     color: '#46ABE2',
+    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
@@ -18,6 +19,7 @@ module.exports = [
   },
   {
     name: 'Crunchyroll',
+    hidden: true,
     logo: 'services/crunchyroll.png',
     url: 'https://crunchyroll.com',
     color: '#ffe600',
@@ -43,9 +45,11 @@ module.exports = [
   },
   {
     name: 'HBO Max',
+    hidden: true,
     logo: 'services/hbomax.jpeg',
     url: 'https://play.hbomax.com/',
     color: '#5b2ddb',
+    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
     style: {},
     permissions: [],
   },
@@ -62,8 +66,8 @@ module.exports = [
     name: 'Libreflix',
     hidden: true,
     logo: 'services/libreflix.png',
-    url: "https://libreflix.org/",
-    color: "#0088AA",
+    url: 'https://libreflix.org/',
+    color: '#0088AA',
     style: {},
     permissions: []
   },
@@ -72,6 +76,7 @@ module.exports = [
     logo: 'services/netflix.png',
     url: 'https://netflix.com/browse',
     color: '#e50914',
+    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
@@ -86,15 +91,16 @@ module.exports = [
   },
   {
     name: 'PlutoTv',
-    hidden: true,
     logo: 'services/pluto-tv.png',
     url: 'https://pluto.tv/',
     color: '#000000',
+    userAgent: "Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0.0.2) AppleWebkit/605.1.15 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
   {
     name: 'Twitch',
+    hidden: true,
     logo: 'services/twitch.svg',
     url: 'https://twitch.tv',
     color: '#6441a5',
