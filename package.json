@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder -c build/electron-builder.yml -p always"
+    "build": "yarn rimraf dist && electron-builder -c build/electron-builder.yml -p always"
   },
   "repository": "https://github.com/psycodeliccircus/ESXPlayer.git",
   "author": "Renildo Marcio <renildomrc@gmail.com>",
