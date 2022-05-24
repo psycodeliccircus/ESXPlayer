@@ -11,7 +11,8 @@
   "author": "Renildo Marcio <renildomrc@gmail.com>",
   "devDependencies": {
     "electron": "^12.0.11",
-    "electron-builder": "^22.3.2"
+    "electron-builder": "^22.3.2",
+    "electron-notarize": "^1.2.1"
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.5.0",

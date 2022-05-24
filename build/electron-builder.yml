@@ -1,6 +1,16 @@
+productName: ESXPlayer
 appId: me.renildomarcio.ESXPlayer
+artifactName: ${productName}-setup-${version}.${ext}
+copyright: Copyright © 2015-2022 ESXBrasil - Dev by RenildoMarcio
 mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  artifactName: ${productName}-setup-${version}-${arch}.${ext}
   category: public.app-category.entertainment
+  icon: build/icon.ico
 win:
   target:
     - target: nsis
@@ -15,12 +25,27 @@ win:
       arch:
         - x64
         - ia32
+  icon: build/icon.ico
+nsis:
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/uninstall.ico
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  runAfterFinish: true
+  createStartMenuShortcut: true
+  packElevateHelper: true
+  createDesktopShortcut: true
+  shortcutName: ESXPlayer
 snap:
   plugs:
     - default
     - screen-inhibit-control
 linux:
   category: Video
+  maintainer: Renildo Marcio
+  vendor: Renildo Marcio
+  synopsis: ESXPlayer
+  description: A stream player for Linux, Windows, Mac now with portuguese language
   target:
     - AppImage
     - snap
