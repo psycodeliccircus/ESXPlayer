@@ -9,11 +9,12 @@ module.exports = [
     permissions: []
   },
   {
-    name: 'CBS All Access',
+    name: 'Paramont +',
     hidden: true,
-    logo: 'services/cbs-all-access.png',
+    logo: 'services/paramount-plus-logo-5.png',
     url: 'https://www.cbs.com/all-access/',
     color: '#4ca3dd',
+    userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
     style: {},
     permissions: []
   },
@@ -130,6 +131,15 @@ module.exports = [
     logo: 'services/youtube.svg',
     url: 'https://youtube.com/tv',
     color: '#ff0000',
+    style: {},
+    userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
+    permissions: []
+  },
+  {
+    name: 'TikTok',
+    logo: 'services/TikTok.png',
+    url: 'https://www.tiktok.com/@renildomarcio',
+    color: '#000000',
     style: {},
     userAgent: "Mozilla/5.0 (Linux; Android 7.1.2; SMART_TV Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko)",
     permissions: []

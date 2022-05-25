@@ -13,3 +13,5 @@ thumbs.db
 package.windows.json
 yarn.lock
 package-lock.json
+default.log
+esxplayer.log

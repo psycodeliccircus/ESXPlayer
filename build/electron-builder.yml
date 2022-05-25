@@ -17,10 +17,6 @@ win:
       arch:
         - x64
         - ia32
-    - target: portable
-      arch:
-        - x64
-        - ia32
   icon: build/icon.ico
 nsis:
   installerIcon: build/icon.ico
