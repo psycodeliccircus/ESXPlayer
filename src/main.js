@@ -1,4 +1,4 @@
-// Modules to control application life and create native browser window
+// Módulos para controlar a vida útil do aplicativo e criar janela nativa do navegador
 const fs = require('fs'),
   path = require('path'),
   { app, BrowserWindow, session, Menu, ipcMain, dialog } = require('electron'),
@@ -15,17 +15,32 @@ const headerScript = fs.readFileSync(
   'utf8'
 );
 
-// Create Global Varibles
-let mainWindow; // Global Windows Object
+// Manipule a criação/remoção de atalhos no Windows ao instalar/desinstalar.
+if (require('electron-squirrel-startup')) {
+  // eslint-disable-line global-require
+  app.quit();
+}
+
+// Criar variáveis globais
+let mainWindow; // Objeto Global do Windows
 const menu = require('./menu');
 const store = new Store();
 const log = require('log-to-file')
 const { autoUpdater } = require('electron-updater');
 const isUserDeveloper = require('electron-is-dev')
+const { download } = require('electron-dl')
 const log1 = require('electron-log')
 
-
 log(path.join(__dirname, 'esxplayer.log'))
+
+app.setAppUserModelId("com.github.psycodeliccircus.esxplayer");
+
+autoUpdater.setFeedURL({
+  provider: "github",
+  owner: "psycodeliccircus",
+  releaseType: "release",
+  repo: "ESXPlayer"
+});
 
 // Analytics endpoint
 let defaultUserAgent;
@@ -45,7 +60,7 @@ async function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      contextIsolation: false, // Must be disabled for preload script. I am not aware of a workaround but this *shouldn't* effect security
+      contextIsolation: false, // Deve ser desabilitado para script de pré-carregamento. Não estou ciente de uma solução alternativa, mas isso *não deve* afetar a segurança
       enableRemoteModule: true,
       plugins: true,
       preload: path.join(__dirname, 'client-preload.js')
@@ -53,7 +68,7 @@ async function createWindow() {
 
     
 
-    // Window Styling
+    // Estilo de janela
     transparent: true,
     vibrancy: 'ultra-dark',
     frame: store.get('options.pictureInPicture')
@@ -67,7 +82,7 @@ async function createWindow() {
 
   defaultUserAgent = mainWindow.webContents.userAgent;
 
-  // Connect Adblocker To Window if Enabled
+  // Conecte o Adblocker à janela se ativado
   if (store.get('options.adblock')) {
     let engineCachePath = path.join(
       app.getPath('userData'),
@@ -75,8 +90,8 @@ async function createWindow() {
     );
 
     if (fs.existsSync(engineCachePath)) {
-      console.log('Adblock engine cache found. Loading it into app.');
-      log('Adblock engine cache found. Loading it into app.', 'esxplayer.log')
+      console.log('Cache do mecanismo Adblock encontrado. Carregando-o no aplicativo.');
+      log('Cache do mecanismo Adblock encontrado. Carregando-o no aplicativo.', 'esxplayer.log')
       var engine = await ElectronBlocker.deserialize(
         fs.readFileSync(engineCachePath)
       );
@@ -85,15 +100,15 @@ async function createWindow() {
     }
     engine.enableBlockingInSession(session.defaultSession);
 
-    // Backup Engine Cache to Disk
+    // Cache do mecanismo de backup para disco
     fs.writeFile(engineCachePath, engine.serialize(), err => {
       if (err) throw err;
-      console.log('Adblock Engine file cache has been updated!');
-      log('Adblock Engine file cache has been updated!', 'esxplayer.log')
+      console.log('O cache de arquivos do Adblock Engine foi atualizado!');
+      log('O cache de arquivos do Adblock Engine foi atualizado!', 'esxplayer.log')
     });
   }
 
-  // Reset The Windows Size and Location
+  // Redefinir o tamanho e a localização do Windows
   let windowDetails = store.get('options.windowDetails');
   let relaunchWindowDetails = store.get('relaunch.windowDetails');
   if (relaunchWindowDetails) {
@@ -114,7 +129,7 @@ async function createWindow() {
     );
   }
 
-  // Configire Picture In Picture
+  // Configurar imagem na imagem
   if (store.get('options.pictureInPicture') && process.platform === 'darwin') {
     app.dock.hide();
     mainWindow.setAlwaysOnTop(true, 'floating');
@@ -123,15 +138,15 @@ async function createWindow() {
     app.dock.show();
   }
 
-  // Detect and update version
+  // Detectar e atualizar a versão
   if (!store.get('version')) {
     store.set('version', app.getVersion());
     store.set('services', []);
-    console.log('Initialised Config!');
-    log('Initialised Config!', 'esxplayer.log')
+    console.log('Configuração inicializada!');
+    log('Configuração inicializada!', 'esxplayer.log')
   }
 
-  // Load the services and merge the users and default services
+  // Carregue os serviços e mescle os usuários e serviços padrão
   let userServices = store.get('services') || [];
   global.services = userServices;
 
@@ -156,52 +171,52 @@ async function createWindow() {
     }
   });
 
-  // Create The Menubar
+  // Criar a barra de menus
   Menu.setApplicationMenu(menu(store, global.services, mainWindow, app, defaultUserAgent));
 
-  // Load the UI or the Default Service
+  // Carregar a interface do usuário ou o serviço padrão
   let defaultService = store.get('options.defaultService'),
     lastOpenedPage = store.get('options.lastOpenedPage'),
     relaunchToPage = store.get('relaunch.toPage');
 
   if (relaunchToPage !== undefined) {
-    console.log('Relaunching Page ' + relaunchToPage);
-    log(('Relaunching Page ' + relaunchToPage), 'esxplayer.log');
+    console.log('Reiniciar página ' + relaunchToPage);
+    log(('Reiniciar página ' + relaunchToPage), 'esxplayer.log');
     mainWindow.loadURL(relaunchToPage);
     store.delete('relaunch.toPage');
   } else if (defaultService == 'lastOpenedPage' && lastOpenedPage) {
-    console.log('Loading The Last Opened Page ' + lastOpenedPage);
-    log(('Loading The Last Opened Page ' + lastOpenedPage), 'esxplayer.log')
+    console.log('Carregando a última página aberta ' + lastOpenedPage);
+    log(('Carregando a última página aberta ' + lastOpenedPage), 'esxplayer.log')
     mainWindow.loadURL(lastOpenedPage);
   } else if (defaultService != undefined) {
     defaultService = global.services.find(
       service => service.name == defaultService
     );
     if (defaultService.url) {
-      console.log('Loading The Default Service ' + defaultService.url);
-      log(('Loading The Default Service ' + defaultService.url), 'esxplayer.log')
+      console.log('Carregando o serviço padrão ' + defaultService.url);
+      log(('Carregando o serviço padrão ' + defaultService.url), 'esxplayer.log')
       mainWindow.loadURL(defaultService.url);
       mainWindow.webContents.userAgent = defaultService.userAgent ? defaultService.userAgent : defaultUserAgent;
     } else {
       console.log(
-        "Error Default Service Doesn't Have A URL Set. Falling back to the menu."
+        "O serviço padrão de erro não tem um conjunto de URL. Voltando ao menu."
       );
       mainWindow.loadFile('src/ui/index.html');
     }
   } else {
-    console.log('Loading The Main Menu');
-    log('Loading The Main Menu', 'esxplayer.log')
+    console.log('Carregando o menu principal');
+    log('Carregando o menu principal', 'esxplayer.log')
     mainWindow.loadFile('src/ui/index.html');
   }
 
-  // Emitted when the window is closing
+  // Emitido quando a janela está fechando
   mainWindow.on('close', e => {
-    // Save open service if lastOpenedPage is the default service
+    // Salvar serviço aberto se a última página aberta for o serviço padrão
     if (store.get('options.defaultService') == 'lastOpenedPage') {
       store.set('options.lastOpenedPage', mainWindow.getURL());
     }
 
-    // If enabled store the window details so they can be restored upon restart
+    // Se ativado, armazene os detalhes da janela para que possam ser restaurados na reinicialização
     if (store.get('options.windowDetails')) {
       if (mainWindow) {
         store.set('options.windowDetails', {
@@ -210,20 +225,20 @@ async function createWindow() {
         });
       } else {
         console.error(
-          'Error window was not defined while trying to save windowDetails'
+          'A janela de erro não foi definida ao tentar salvar a janela Detalhes'
         );
         return;
       }
     }
   });
 
-  // Inject Header Script On Page Load If In Frameless Window
+  // Injetar script de cabeçalho no carregamento da página se estiver na janela sem moldura
   mainWindow.webContents.on('dom-ready', broswerWindowDomReady);
 
-  // Emitted when the window is closed.
+  // Emitido quando a janela é fechada.
   mainWindow.on('closed', mainWindowClosed);
 
-  // Emitted when website requests permissions - Electron default allows any permission this restricts websites
+  // Emitido quando o site solicita permissões - o padrão Electron permite qualquer permissão que restringe sites
   mainWindow.webContents.session.setPermissionRequestHandler(
     (webContents, permission, callback) => {
       let websiteOrigin = new URL(webContents.getURL()).origin;
@@ -251,8 +266,8 @@ async function createWindow() {
   );
 
   // Analytics
-  // Simple Analytics is used which protects the users privacy. This tracking allow the developers to build
-  // a better product with more insight into what devices it is being used on so better testing can be done.
+  // O Simple Analytics é usado para proteger a privacidade dos usuários. Esse rastreamento permite que os desenvolvedores construam
+  // um produto melhor com mais informações sobre em quais dispositivos ele está sendo usado para que testes melhores possam ser feitos.
   let unique = false;
   if(!store.get('_do_not_edit___date_')) {
     store.set('_do_not_edit___date_', (new Date()).getTime())
@@ -267,41 +282,47 @@ async function createWindow() {
   }
 }
 
-// This method is called when the broswer window's dom is ready
-// it is used to inject the header if pictureInPicture mode and
-// hideWindowFrame are enabled.
+// Este método é chamado quando o dom do Windows do navegador está pronto
+// é usado para injetar o cabeçalho se o modo pictureInPicture e
+// hideWindowFrame estão habilitados.
 function broswerWindowDomReady() {
   if (
     store.get('options.pictureInPicture') ||
     store.get('options.hideWindowFrame')
   ) {
-    // TODO: This is a temp fix and a propper fix should be developed
+    // TODO: Esta é uma correção temporária e uma correção adequada deve ser desenvolvida
     if (mainWindow != null) {
       mainWindow.webContents.executeJavaScript(headerScript);
     }
   }
 }
 
-// Run when window is closed. This cleans up the mainWindow object to save resources.
+// Executar quando a janela estiver fechada. Isso limpa o objeto mainWindow para economizar recursos.
 function mainWindowClosed() {
   mainWindow = null;
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// The timeout fixes the trasparent background on Linux ???? why
+ipcMain.on('download-button', async (event, { url }) => {
+  const mainWindow = BrowserWindow.getFocusedWindow();
+  console.log(await download(mainWindow, url));
+  log(await download(mainWindow, url), 'esxplayer.log')
+});
+
+// Este método será chamado quando o Electron terminar
+// inicialização e está pronto para criar janelas do navegador.
+// O tempo limite corrige o fundo transparente no Linux ???? Por quê
 app.on('ready', () => setTimeout(createWindow, 500));
 
-// This is a custom event that is used to relaunch the application.
-// It destroys and recreates the broswer window. This is used to apply
-// settings that Electron doesn't allow to be changed on an active
-// broswer window.
+// Este é um evento personalizado que é usado para reiniciar o aplicativo.
+// Ele destrói e recria a janela do navegador. Isso é usado para aplicar
+// configurações que o Electron não permite que sejam alteradas em um ativo
+// janela do navegador.
 app.on('relaunch', () => {
-  console.log('Relaunching The Application!');
+  console.log('Reiniciando o aplicativo!');
 
-  log('Relaunching The Application!', 'esxplayer.log')
+  log('Reiniciando o aplicativo!', 'esxplayer.log')
 
-  // Store details to remeber when relaunched
+  // Armazenar detalhes para lembrar quando reiniciado
   if (mainWindow.getURL() != '') {
     store.set('relaunch.toPage', mainWindow.getURL());
   }
@@ -310,21 +331,21 @@ app.on('relaunch', () => {
     size: mainWindow.getSize()
   });
 
-  // Destory The BroswerWindow
+  // Destrua a janela do navegador
   mainWindow.webContents.removeListener('dom-ready', broswerWindowDomReady);
 
-  // Remove App Close Listener
+  // Remover App Close Listener
   mainWindow.removeListener('closed', mainWindowClosed);
 
-  // Close App
+  // Fechar aplicativo
   mainWindow.close();
   mainWindow = undefined;
 
-  // Create a New BroswerWindow
+  // Criar uma nova janela do navegador
   createWindow();
 });
 
-// Chnage the windows url when told to by the ui
+// Altere o URL do Windows quando solicitado pela interface do usuário
 ipcMain.on('open-url', (e, service) => {
   console.log('Openning Service ' + service.name);
   log(('Openning Service ' + service.name), 'esxplayer.log')
@@ -332,7 +353,7 @@ ipcMain.on('open-url', (e, service) => {
   mainWindow.loadURL(service.url);
 });
 
-// Disable fullscreen when button pressed
+// Desativar tela cheia quando o botão for pressionado
 ipcMain.on('exit-fullscreen', e => {
   if (store.get('options.pictureInPicture')) {
     store.delete('options.pictureInPicture');
@@ -340,11 +361,11 @@ ipcMain.on('exit-fullscreen', e => {
     store.delete('options.hideWindowFrame');
   }
 
-  // Relaunch
+  // Relançar
   app.emit('relaunch');
 });
 
-// Quit when all windows are closed.
+// Saia quando todas as janelas estiverem fechadas.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -384,49 +405,50 @@ Object.defineProperty(app, 'isPackaged', {
 });
 
 autoUpdater.on('checking-for-update', () => {
-  //log1.log("Checking for updates.")
   log('Checking for updates.', 'esxplayer.log')
 })
 
 autoUpdater.on('update-available', info => {
-  //log1.log("Update available.")
   log('Update available.', 'esxplayer.log')
+  dialog.showMessageBox({
+    message: `Uma nova versão ${info.version}, do ESXPlayer está disponível`,
+    detail: 'A atualização será baixada em segundo plano. Você será notificado quando estiver pronto para ser instalado.'
+  });
 })
 
-autoUpdater.on('download-progress', progressObj => {
-  //log1.log(`Downloading update. DL: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`)
+autoUpdater.on('download-progress', (progressObj) => {
   log((`Downloading update. DL: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`), 'esxplayer.log')
 })
 
 autoUpdater.on('error', err => {
-  //log1.log(`Update check failed: ${err.toString()}`)
   log((`Update check failed: ${err.toString()}`), 'esxplayer.log')
 })
 
-autoUpdater.on('update-not-available', info => {
-  //log1.log("Update not available.")
-  log('Update not available. ', 'esxplayer.log')
-  const dialogOpts = {
-    buttons: ['Reneciar'],
-    title: 'Atualização',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'Você ja esta usando a versão mais atualizada!'
-  };
+autoUpdater.on('update-not-available', (event, releaseNotes, releaseName) => {
+  dialog.showMessageBox({
+    message: 'Nenhuma atualização disponível',
+    detail: `Você está executando a versão mais recente do ESXPlayer.\nVersão: ${app.getVersion()}`
+  });
+  log('Update not available. :)', 'esxplayer.log')
 })
 
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate) => {
-  // log.info('A new version has been downloaded');
+
+autoUpdater.on('update-downloaded', event => {
   log('A new version has been downloaded', 'esxplayer.log')
-  //writeLog('info', 'A new version has been downloaded');
-  const dialogOpts = {
-    buttons: ['Reneciar', 'Mais tarde'],
-    title: 'Dicas para atualização de versão',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'A nova versão foi baixada, Reneciar o programa para instalar a nova versão!'
-  };
-  dialog.showMessageBox(dialogOpts, response => {
+  // Ask user to update the app
+  dialog.showMessageBox({
+    type: 'question',
+    buttons: ['Instalar e reiniciar', 'Instale depois'],
+    defaultId: 0,
+    message: `Uma nova atualização ${event.version} foi baixada`,
+    detail: 'Ele será instalado na próxima vez que você reiniciar o aplicativo'
+  }, response => {
     if (response === 0) {
-      autoUpdater.quitAndInstall();
+      setTimeout(() => {
+        autoUpdater.quitAndInstall();
+        // force app to quit. This is just a workaround, ideally autoUpdater.quitAndInstall() should relaunch the app.
+        app.quit();
+      }, 1000);
     }
   });
 });

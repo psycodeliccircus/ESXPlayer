@@ -1,6 +1,6 @@
 {
   "name": "esxplayer",
-  "version": "3.0.9",
+  "version": "3.1.0",
   "description": "A stream player!",
   "main": "src/main.js",
   "scripts": {
@@ -17,9 +17,11 @@
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.5.0",
+    "electron-dl": "^3.3.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.7",
     "electron-prompt": "^1.5.1",
+    "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^5.2.0",
     "electron-updater": "^5.0.1",
     "log-to-file": "^3.0.0",

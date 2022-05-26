@@ -1,5 +1,5 @@
 productName: ESXPlayer
-appId: me.renildomarcio.ESXPlayer
+appId: com.github.psycodeliccircus.esxplayer
 artifactName: ${productName}-setup-${version}.${ext}
 copyright: Copyright © 2015-2022 ESXBrasil - Dev by RenildoMarcio
 mac:
@@ -28,8 +28,6 @@ nsis:
   packElevateHelper: true
   createDesktopShortcut: true
   shortcutName: ESXPlayer
-portable: 
-    artifactName: ${productName}_portable_${version}.exe
 snap:
   plugs:
     - default
