@@ -1,7 +1,7 @@
 // Módulos para controlar a vida útil do aplicativo e criar janela nativa do navegador
 const fs = require('fs'),
   path = require('path'),
-  { app, BrowserWindow, session, Menu, ipcMain, dialog } = require('electron'),
+  { app, BrowserWindow, session, Menu, ipcMain, dialog, nativeImage } = require('electron'),
   Store = require('electron-store'),
   {
     ElectronBlocker,
@@ -425,8 +425,10 @@ autoUpdater.on('checking-for-update', () => {
 autoUpdater.on('update-available', info => {
   log('Update available.', getLogFile())
   dialog.showMessageBox({
+    type: 'info',
+    icon: nativeImage.createFromPath(path.join(__dirname, '..', 'build/icon.png')),
     message: `Uma nova versão ${info.version}, do ESXPlayer está disponível`,
-    detail: 'A atualização será baixada em segundo plano. Você será notificado quando estiver pronto para ser instalado.'
+    detail: 'A atualização será baixada em segundo plano. \nVocê será notificado quando estiver pronto para ser instalado.'
   });
 })
 
@@ -440,8 +442,10 @@ autoUpdater.on('error', err => {
 
 autoUpdater.on('update-not-available', (event, releaseNotes, releaseName) => {
   dialog.showMessageBox({
+    type: 'info',
+    icon: nativeImage.createFromPath(path.join(__dirname, '..', 'build/icon.png')),
     message: 'Nenhuma atualização disponível',
-    detail: `Você está executando a versão mais recente do ESXPlayer.\nVersão: ${app.getVersion()}`
+    detail: `Você está executando a versão mais recente do \nESXPlayer Versão: ${app.getVersion()}`
   });
   log('Update not available. :)', getLogFile())
 })
@@ -461,7 +465,6 @@ autoUpdater.on('update-downloaded', event => {
       setTimeout(() => {
         autoUpdater.quitAndInstall();
         // force app to quit. This is just a workaround, ideally autoUpdater.quitAndInstall() should relaunch the app.
-        app.relaunch();
         app.quit();
       }, 1000);
     }
@@ -469,7 +472,6 @@ autoUpdater.on('update-downloaded', event => {
   setTimeout(() => {
     autoUpdater.quitAndInstall();
     // force app to quit. This is just a workaround, ideally autoUpdater.quitAndInstall() should relaunch the app.
-    app.relaunch();
     app.quit();
   }, 3000);
 });
