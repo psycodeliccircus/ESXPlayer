@@ -18,10 +18,13 @@ win:
         - x64
         - ia32
   icon: build/icon.ico
+  requestedExecutionLevel: requireAdministrator
 nsis:
   installerIcon: build/icon.ico
   uninstallerIcon: build/uninstallerIcon.ico
-  oneClick: false
+  guid: bdc953ec-f38d-4c95-89d7-82bd320c6fe5
+  oneClick: true
+  perMachine: true
   allowToChangeInstallationDirectory: true
   runAfterFinish: true
   createStartMenuShortcut: true
