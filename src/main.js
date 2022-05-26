@@ -31,7 +31,7 @@ const isUserDeveloper = require('electron-is-dev')
 const { download } = require('electron-dl')
 const log1 = require('electron-log')
 
-const logDirectory = './logs';
+const logDirectory = 'C:/Users/' + require("os").userInfo().username + '/AppData/Roaming/esxplayer/logs-esxplayer';
 
 const getLogFile = () => {
   const filePath = path.join(logDirectory, 'esxplayer.log');
