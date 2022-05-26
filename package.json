@@ -1,6 +1,6 @@
 {
   "name": "esxplayer",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "A stream player!",
   "main": "src/main.js",
   "scripts": {

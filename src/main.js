@@ -31,7 +31,19 @@ const isUserDeveloper = require('electron-is-dev')
 const { download } = require('electron-dl')
 const log1 = require('electron-log')
 
-log(path.join(__dirname, 'esxplayer.log'))
+const logDirectory = './logs';
+
+const getLogFile = () => {
+  const filePath = path.join(logDirectory, 'esxplayer.log');
+
+  if (!fs.existsSync(logDirectory)) {
+    fs.mkdirSync(logDirectory);
+  }
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '');
+  }
+  return filePath;
+};
 
 app.setAppUserModelId("com.github.psycodeliccircus.esxplayer");
 
@@ -46,11 +58,13 @@ autoUpdater.setFeedURL({
 let defaultUserAgent;
 
 async function createWindow() {
-  log('Creating window', 'esxplayer.log')
+  log('Creating window', getLogFile())
   if (isUserDeveloper) {
     autoUpdater.checkForUpdates();
+    log(isUserDeveloper, getLogFile());
   } else {
     autoUpdater.checkForUpdates();
+    log("normal", getLogFile());
   }
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -91,7 +105,7 @@ async function createWindow() {
 
     if (fs.existsSync(engineCachePath)) {
       console.log('Cache do mecanismo Adblock encontrado. Carregando-o no aplicativo.');
-      log('Cache do mecanismo Adblock encontrado. Carregando-o no aplicativo.', 'esxplayer.log')
+      log('Cache do mecanismo Adblock encontrado. Carregando-o no aplicativo.', getLogFile())
       var engine = await ElectronBlocker.deserialize(
         fs.readFileSync(engineCachePath)
       );
@@ -104,7 +118,7 @@ async function createWindow() {
     fs.writeFile(engineCachePath, engine.serialize(), err => {
       if (err) throw err;
       console.log('O cache de arquivos do Adblock Engine foi atualizado!');
-      log('O cache de arquivos do Adblock Engine foi atualizado!', 'esxplayer.log')
+      log('O cache de arquivos do Adblock Engine foi atualizado!', getLogFile())
     });
   }
 
@@ -143,7 +157,7 @@ async function createWindow() {
     store.set('version', app.getVersion());
     store.set('services', []);
     console.log('Configuração inicializada!');
-    log('Configuração inicializada!', 'esxplayer.log')
+    log('Configuração inicializada!', getLogFile())
   }
 
   // Carregue os serviços e mescle os usuários e serviços padrão
@@ -181,12 +195,12 @@ async function createWindow() {
 
   if (relaunchToPage !== undefined) {
     console.log('Reiniciar página ' + relaunchToPage);
-    log(('Reiniciar página ' + relaunchToPage), 'esxplayer.log');
+    log(('Reiniciar página ' + relaunchToPage), getLogFile());
     mainWindow.loadURL(relaunchToPage);
     store.delete('relaunch.toPage');
   } else if (defaultService == 'lastOpenedPage' && lastOpenedPage) {
     console.log('Carregando a última página aberta ' + lastOpenedPage);
-    log(('Carregando a última página aberta ' + lastOpenedPage), 'esxplayer.log')
+    log(('Carregando a última página aberta ' + lastOpenedPage), getLogFile())
     mainWindow.loadURL(lastOpenedPage);
   } else if (defaultService != undefined) {
     defaultService = global.services.find(
@@ -194,7 +208,7 @@ async function createWindow() {
     );
     if (defaultService.url) {
       console.log('Carregando o serviço padrão ' + defaultService.url);
-      log(('Carregando o serviço padrão ' + defaultService.url), 'esxplayer.log')
+      log(('Carregando o serviço padrão ' + defaultService.url), getLogFile())
       mainWindow.loadURL(defaultService.url);
       mainWindow.webContents.userAgent = defaultService.userAgent ? defaultService.userAgent : defaultUserAgent;
     } else {
@@ -205,7 +219,7 @@ async function createWindow() {
     }
   } else {
     console.log('Carregando o menu principal');
-    log('Carregando o menu principal', 'esxplayer.log')
+    log('Carregando o menu principal', getLogFile())
     mainWindow.loadFile('src/ui/index.html');
   }
 
@@ -305,7 +319,7 @@ function mainWindowClosed() {
 ipcMain.on('download-button', async (event, { url }) => {
   const mainWindow = BrowserWindow.getFocusedWindow();
   console.log(await download(mainWindow, url));
-  log(await download(mainWindow, url), 'esxplayer.log')
+  log(await download(mainWindow, url), getLogFile())
 });
 
 // Este método será chamado quando o Electron terminar
@@ -320,7 +334,7 @@ app.on('ready', () => setTimeout(createWindow, 500));
 app.on('relaunch', () => {
   console.log('Reiniciando o aplicativo!');
 
-  log('Reiniciando o aplicativo!', 'esxplayer.log')
+  log('Reiniciando o aplicativo!', getLogFile())
 
   // Armazenar detalhes para lembrar quando reiniciado
   if (mainWindow.getURL() != '') {
@@ -348,7 +362,7 @@ app.on('relaunch', () => {
 // Altere o URL do Windows quando solicitado pela interface do usuário
 ipcMain.on('open-url', (e, service) => {
   console.log('Openning Service ' + service.name);
-  log(('Openning Service ' + service.name), 'esxplayer.log')
+  log(('Openning Service ' + service.name), getLogFile())
   mainWindow.webContents.userAgent = service.userAgent ? service.userAgent : defaultUserAgent;
   mainWindow.loadURL(service.url);
 });
@@ -405,11 +419,11 @@ Object.defineProperty(app, 'isPackaged', {
 });
 
 autoUpdater.on('checking-for-update', () => {
-  log('Checking for updates.', 'esxplayer.log')
+  log('Checking for updates.', getLogFile())
 })
 
 autoUpdater.on('update-available', info => {
-  log('Update available.', 'esxplayer.log')
+  log('Update available.', getLogFile())
   dialog.showMessageBox({
     message: `Uma nova versão ${info.version}, do ESXPlayer está disponível`,
     detail: 'A atualização será baixada em segundo plano. Você será notificado quando estiver pronto para ser instalado.'
@@ -417,11 +431,11 @@ autoUpdater.on('update-available', info => {
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
-  log((`Downloading update. DL: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`), 'esxplayer.log')
+  log((`Downloading update. DL: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`), getLogFile())
 })
 
 autoUpdater.on('error', err => {
-  log((`Update check failed: ${err.toString()}`), 'esxplayer.log')
+  log((`Update check failed: ${err.toString()}`), getLogFile())
 })
 
 autoUpdater.on('update-not-available', (event, releaseNotes, releaseName) => {
@@ -429,12 +443,12 @@ autoUpdater.on('update-not-available', (event, releaseNotes, releaseName) => {
     message: 'Nenhuma atualização disponível',
     detail: `Você está executando a versão mais recente do ESXPlayer.\nVersão: ${app.getVersion()}`
   });
-  log('Update not available. :)', 'esxplayer.log')
+  log('Update not available. :)', getLogFile())
 })
 
 
 autoUpdater.on('update-downloaded', event => {
-  log('A new version has been downloaded', 'esxplayer.log')
+  log('A new version has been downloaded', getLogFile())
   // Ask user to update the app
   dialog.showMessageBox({
     type: 'question',
