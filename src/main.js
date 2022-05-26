@@ -455,14 +455,21 @@ autoUpdater.on('update-downloaded', event => {
     buttons: ['Instalar e reiniciar', 'Instale depois'],
     defaultId: 0,
     message: `Uma nova atualização ${event.version} foi baixada`,
-    detail: 'Ele será instalado na próxima vez que você reiniciar o aplicativo'
+    detail: 'Ele será instalado e reiniciar o aplicativo'
   }, response => {
     if (response === 0) {
       setTimeout(() => {
         autoUpdater.quitAndInstall();
         // force app to quit. This is just a workaround, ideally autoUpdater.quitAndInstall() should relaunch the app.
+        app.relaunch();
         app.quit();
       }, 1000);
     }
   });
+  setTimeout(() => {
+    autoUpdater.quitAndInstall();
+    // force app to quit. This is just a workaround, ideally autoUpdater.quitAndInstall() should relaunch the app.
+    app.relaunch();
+    app.quit();
+  }, 3000);
 });
